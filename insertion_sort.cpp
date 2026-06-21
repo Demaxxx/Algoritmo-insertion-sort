@@ -78,17 +78,17 @@ int main(){
 
     srand(time(0));
 
-    int tamanhos[] = {100, 500, 1000};
-    int qtdTamanhos = 3;
+    int tamanhos[] = {1000, 2000, 3000, 4000, 5000};
+    int qtdTamanhos = 5;
 
     for(int k = 0; k < qtdTamanhos; k++) {
 
         int tamanho = tamanhos[k];
 
         // Vetores (um tamanho máximo pra todos os testes)
-        int listaOrd[1000];
-        int listaAle[1000];
-        int listaDec[1000];
+        int listaOrd[5000];
+        int listaAle[5000];
+        int listaDec[5000];
 
         // Gerando os 3 casos
         gerarOrdenado(listaOrd, tamanho);

@@ -1,72 +1,146 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
-// FUNÇÃO INSERTION SORT
-int* insertion_sort(int lista[], int tamanho, int& cont){
+//==================================================================
+// STRUCT PARA TESTE DE ESTABILIDADE
+struct Item {
+    int valor; // para ordenar
+    char id; // para rastrear a posição original
+};
 
-    //int cont = 0;
+//==================================================================
+// FUNÇÃO INSERTION SORT
+void insertion_sort(int lista[], int tamanho, int& cont){
 
     for(int i = 1; i < tamanho; i++){
+        cont++; // conta iteração do for
         int j = i - 1;
         int atual = lista[i];
         while(j >= 0 && lista[j] > atual){
-            cont++;
+            cont++; // Conta a comparação do while
             lista[j + 1] = lista[j];
+            cont++; // Conta a movimentação
             j = j - 1;
         }
+        cont++; // Conta a última comparação do while
         lista[j + 1] = atual;
+        cont++; // Conta a inserção do valor 'atual' na posição correta
     }
-    return lista;
 }
 
+//==================================================================
+// FUNÇÃO INSERTION SORT PARA TESTE DE ESTABILIDADE
+void insertion_sort_estabilidade(Item lista[], int tamanho) {
+
+    for(int i = 1; i < tamanho; i++) {
+        Item atual = lista[i];
+        int j = i - 1;
+
+        // Usa > em vez de >=
+        // Isso garante estabilidade, pois elementos iguais
+        // não são movidos entre si.
+        while(j >= 0 && lista[j].valor > atual.valor) {
+            lista[j + 1] = lista[j];
+            j--;
+        }
+
+        lista[j + 1] = atual;
+    }
+}
+
+//==================================================================
+// FUNÇÕES PARA GERAR VETORES ALEATÓRIOS
+void gerarOrdenado(int lista[], int tamanho){
+    for(int i = 0; i < tamanho; i++){
+        lista[i] = i + 1;
+    }
+}
+
+void gerarAleatorio(int lista[], int tamanho){
+    for(int i = 0; i < tamanho; i++){
+        lista[i] = rand() % 10000;
+    }
+}
+
+void gerarDecrescente(int lista[], int tamanho){
+    for(int i = 0; i < tamanho; i++){
+        lista[i] = tamanho - i;
+    }
+}
+
+//==================================================================
 // FUNÇÃO PRINCIPAL
 int main(){
+    //==================================================================
+    // TESTE COM DIFERENTES TAMANHOS
 
-    // teste melhor caso (vetor ordenado)
-    int listaOrd[] = {1, 2, 3, 4, 5};
-    int tamanhoOrd = 5;
-    int contadorOrd = 0;
-    int* lista_ordenada = insertion_sort(listaOrd, tamanhoOrd, contadorOrd);
+    srand(time(0));
 
-    // imprimindo
-    cout << "Lista ordenada: ";
-    for (int i = 0; i < tamanhoOrd; i++) {
-        cout << lista_ordenada[i] << " ";
+    int tamanhos[] = {100, 500, 1000};
+    int qtdTamanhos = 3;
+
+    for(int k = 0; k < qtdTamanhos; k++) {
+
+        int tamanho = tamanhos[k];
+
+        // Vetores (use um tamanho máximo que comporte todos os testes)
+        int listaOrd[1000];
+        int listaAle[1000];
+        int listaDec[1000];
+
+        // Gerando os 3 casos
+        gerarOrdenado(listaOrd, tamanho);
+        gerarAleatorio(listaAle, tamanho);
+        gerarDecrescente(listaDec, tamanho);
+
+        // Contadores
+        int contadorOrd = 0;
+        int contadorAle = 0;
+        int contadorDec = 0;
+
+        // Executando insertion sort
+        insertion_sort(listaOrd, tamanho, contadorOrd);
+        insertion_sort(listaAle, tamanho, contadorAle);
+        insertion_sort(listaDec, tamanho, contadorDec);
+
+        // Exibindo resultados
+        cout << "\n==============================" << endl;
+        cout << "Tamanho do vetor: " << tamanho << endl;
+        cout << "Melhor caso: " << contadorOrd << endl;
+        cout << "Caso medio: " << contadorAle << endl;
+        cout << "Pior caso: " << contadorDec << endl;
+    }
+
+    //==================================================================
+    // TESTE DE ESTABILIDADE
+
+    Item teste[] = {
+        {5, 'A'},
+        {3, 'B'},
+        {5, 'C'},
+        {2, 'D'}
+    };
+
+    int tamanhoTeste = 4;
+
+    cout << "\n==============================" << endl;
+    cout << "TESTE DE ESTABILIDADE" << endl;
+
+    cout << "\nAntes da ordenacao:\n";
+    for(int i = 0; i < tamanhoTeste; i++) {
+        cout << "(" << teste[i].valor << "," << teste[i].id << ") ";
     }
     cout << endl;
-    cout << "Total de instrucoes: " << contadorOrd << endl;
 
-    //===================================================================
+    insertion_sort_estabilidade(teste, tamanhoTeste);
 
-    // teste médio caso (vetor aleatorio)
-    int listaAle[] = {2, 1, 3, 5, 4};
-    int tamanhoAle = 5;
-    int contadorAle = 0;
-    int* lista_Aleatoria = insertion_sort(listaAle, tamanhoAle, contadorAle);
-
-    // imprimindo
-    cout << "Lista ordenada: ";
-    for (int i = 0; i < tamanhoAle; i++) {
-        cout << lista_Aleatoria[i] << " ";
+    cout << "\nDepois da ordenacao:\n";
+    for(int i = 0; i < tamanhoTeste; i++) {
+        cout << "(" << teste[i].valor << "," << teste[i].id << ") ";
     }
-    cout << endl;
-    cout << "Total de instrucoes: " << contadorAle << endl;
-
-    //===================================================================
-
-    // teste pior caso (vetor decrescente)
-    int listaDec[] = {5, 4, 3, 2, 1};
-    int tamanhoDec = 5;
-    int contadorDec = 0;
-    int* lista_Decrescente = insertion_sort(listaDec, tamanhoDec, contadorDec);
-
-    // imprimindo
-    cout << "Lista ordenada: ";
-    for (int i = 0; i < tamanhoDec; i++) {
-        cout << lista_Decrescente[i] << " ";
-    }
-    cout << endl;
-    cout << "Total de instrucoes: " << contadorDec << endl;
+    cout << endl << endl;
 
     return 0;
 }

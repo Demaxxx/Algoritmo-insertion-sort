@@ -85,7 +85,7 @@ int main(){
 
         int tamanho = tamanhos[k];
 
-        // Vetores (use um tamanho máximo que comporte todos os testes)
+        // Vetores (um tamanho máximo pra todos os testes)
         int listaOrd[1000];
         int listaAle[1000];
         int listaDec[1000];
